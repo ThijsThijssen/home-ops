@@ -21,3 +21,14 @@ nodes:
       mtu: 1500
       encryptDisk: false
       kernelModules: []
+  - host: "k8s-1"
+    ip: "192.168.0.163"
+    role: control-plane
+    schematicId: "9b634256c85a3a513cc3ffe72d185c6889dec172a505853ec111d155b498bca7"
+    data:
+      installDisk: "/dev/nvme0n1"
+      installDiskSerial: ""
+      macAddr: "ac:e2:d3:0e:32:76"
+      mtu: 1500
+      encryptDisk: false
+      kernelModules: []
