@@ -11,7 +11,24 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyDeployment:
-        replicas: 1
+        replicas: 3
+        pod:
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: envoy
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    topologyKey: kubernetes.io/hostname
+                    labelSelector:
+                      matchLabels:
+                        app.kubernetes.io/name: envoy
         container:
           imageRepository: mirror.gcr.io/envoyproxy/envoy
           resources:
@@ -19,6 +36,8 @@ spec:
               cpu: 100m
             limits:
               memory: 1Gi
+      envoyPDB:
+        minAvailable: 1
       envoyService:
         externalTrafficPolicy: Cluster
   shutdown:
@@ -168,3 +187,13 @@ spec:
           requestRedirect:
             scheme: https
             statusCode: 301
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: envoy
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: envoy

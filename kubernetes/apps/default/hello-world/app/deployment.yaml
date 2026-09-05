@@ -61,3 +61,13 @@ spec:
             items:
               - key: index.html
                 path: index.html
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hello-world
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: hello-world
